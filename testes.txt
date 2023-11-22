@@ -1,0 +1,19 @@
+votação - classificação
+Recall: 0.4658  Precisão: 0.5368        AUC: 0.5095
+Capital: -203.5 Ações em posse: 0       Preço: 35.53    Riqueza: -203.5
+
+media - classificação
+Recall: 0.4932  Precisão: 0.5510        AUC: 0.5232
+Capital: -133.76        Ações em posse: 0       Preço: 35.53    Riqueza: -133.76
+
+media ponderada - classificação
+Recall: 0.4795  Precisão: 0.5497        AUC: 0.5215
+Capital: -135.74        Ações em posse: 0       Preço: 35.53    Riqueza: -135.74
+
+media - regressão
+MAE: 0.6206     RMSE: 0.8850
+Capital: -1307.48       Ações em posse: 0       Preço: 35.53    Riqueza: -1307.48
+
+media ponderada - regressão
+MAE: 0.6206     RMSE: 0.8850
+Capital: -1307.48       Ações em posse: 0       Preço: 35.53    Riqueza: -1307.48
