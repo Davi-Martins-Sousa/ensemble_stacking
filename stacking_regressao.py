@@ -23,7 +23,7 @@ def update(capital,posicao,precoHoje,decisao,ultimoDia):
             capital, posicao = venda(capital, posicao, precoHoje, posicao)
     return capital, posicao
 
-def ensemble(base_path, ano_inicio = '1/3/2022', tipo = 'media'):
+def stacking(base_path, ano_inicio = '1/3/2022'):
     base = pd.read_csv('./dados/{}-indicadores.csv'.format(base_path))
 
     # Remover linhas com valores NaN
@@ -31,6 +31,7 @@ def ensemble(base_path, ano_inicio = '1/3/2022', tipo = 'media'):
 
     # Preparar os retorno e o alvo
     base['Retorno'] = base['Close'].shift(-1) - base['Close']
+    base['Alvo'] = base['Retorno'].apply(lambda retorno: 1 if retorno > 0 else 0)
 
     # Define o inicio de teste
     base['Date'] = pd.to_datetime(base['Date'])
@@ -39,80 +40,68 @@ def ensemble(base_path, ano_inicio = '1/3/2022', tipo = 'media'):
     indice_data_inicio = base[base['Date'].dt.date == data_inicio_teste].index[0]
 
    # Dividir os dados em treinamento e teste
-    X = base.drop(columns=['Date','Open','High','Low','Close','Volume','Retorno'])
-    y = base['Retorno']
-    y = y.copy()
-    y.iloc[-1] = 0
+    X = base.drop(columns=['Date','Open','High','Low','Close','Volume','Alvo','Retorno'])
+    y = base['Alvo']
 
     X_train, X_test = X[base['Date'].dt.date < data_inicio_teste], X[base['Date'].dt.date >= data_inicio_teste]
     y_train, y_test = y[base['Date'].dt.date < data_inicio_teste], y[base['Date'].dt.date >= data_inicio_teste]
-    
+
+    X_train_train, X_train_test, y_train_train, y_train_test = train_test_split(X_train, y_train, test_size=(1 - 0.8), shuffle=False)
+            
+    rf_model = RandomForestRegressor(random_state=42)
+    rf_model.fit(X_train_train, y_train_train)
+    mlp_model = MLPRegressor(random_state=42)
+    mlp_model.fit(X_train_train, y_train_train)
+    xgb_model = XGBRegressor(random_state=42)
+    xgb_model.fit(X_train_train, y_train_train)
+    nb_model = LinearRegression()
+    nb_model.fit(X_train_train, y_train_train)
+    knn_model = KNeighborsRegressor()
+    knn_model.fit(X_train_train, y_train_train)
+
+    data = {
+    'rf': rf_model.predict(X_train_test),
+    'mlp': mlp_model.predict(X_train_test),
+    'xgb': xgb_model.predict(X_train_test),
+    'nb': nb_model.predict(X_train_test),
+    'knn': knn_model.predict(X_train_test),
+    }
+
+    df = pd.DataFrame(data)
+    stacking_model = MLPRegressor(random_state=42)
+    stacking_model.fit(df, y_train_test)
+
+    # retreinamento da base
     rf_model = RandomForestRegressor(random_state=42)
     rf_model.fit(X_train, y_train)
-    rf_predictions = rf_model.predict(X_test)
 
     mlp_model = MLPRegressor(random_state=42)
     mlp_model.fit(X_train, y_train)
-    mlp_predictions = mlp_model.predict(X_test)
 
     xgb_model = XGBRegressor(random_state=42)
     xgb_model.fit(X_train, y_train)
-    xgb_predictions = xgb_model.predict(X_test)
 
     nb_model = LinearRegression()
     nb_model.fit(X_train, y_train)
-    nb_predictions = nb_model.predict(X_test)
 
     knn_model = KNeighborsRegressor()
     knn_model.fit(X_train, y_train)
-    knn_predictions = knn_model.predict(X_test)
 
-    peso = [0.2, 0.2, 0.2, 0.2, 0.2]
+    data = {
+    'rf': rf_model.predict(X_test),
+    'mlp': mlp_model.predict(X_test),
+    'xgb': xgb_model.predict(X_test),
+    'nb': nb_model.predict(X_test),
+    'knn': knn_model.predict(X_test),
+    }
 
-    if tipo == 'media ponderada':
-        X_train_train, X_train_test, y_train_train, y_train_test = train_test_split(X_train, y_train, test_size=(1 - 0.8), shuffle=False)
-        
-        rf_model = RandomForestRegressor(random_state=42)
-        rf_model.fit(X_train_train, y_train_train)
-        rf_predictions_aux = rf_model.predict(X_train_test)
-
-        mlp_model = MLPRegressor(random_state=42)
-        mlp_model.fit(X_train_train, y_train_train)
-        mlp_predictions_aux = mlp_model.predict(X_train_test)
-
-        xgb_model = XGBRegressor(random_state=42)
-        xgb_model.fit(X_train_train, y_train_train)
-        xgb_predictions_aux = xgb_model.predict(X_train_test)
-
-        nb_model = LinearRegression()
-        nb_model.fit(X_train_train, y_train_train)
-        nb_predictions_aux = nb_model.predict(X_train_test)
-
-        knn_model = KNeighborsRegressor()
-        knn_model.fit(X_train_train, y_train_train)
-        knn_predictions_aux = knn_model.predict(X_train_test)
-
-        rf_mae = mean_absolute_error(y_train_test, rf_predictions_aux)
-        mlp_mae = mean_absolute_error(y_train_test, mlp_predictions_aux)
-        xgb_mae = mean_absolute_error(y_train_test, xgb_predictions_aux)
-        nb_mae = mean_absolute_error(y_train_test, nb_predictions_aux)
-        knn_mae = mean_absolute_error(y_train_test, knn_predictions_aux)
-
-        mae = rf_mae + mlp_mae + xgb_mae + nb_mae + knn_mae
-
-        peso = [rf_mae/mae, mlp_mae/mae, xgb_mae/mae, nb_mae/mae, knn_mae/mae]
-        print(peso)
-
-    predictions = np.array([])
-    predictions = (rf_predictions * peso[0] + mlp_predictions * peso[1] + xgb_predictions * peso[2] + nb_predictions * peso[3] + knn_predictions * peso[4])
-    threshold = 0.5
-    predictions = (predictions >= threshold).astype(int)
+    df = pd.DataFrame(data)
+    predictions = stacking_model.predict(df)
 
     mae = mean_absolute_error(y_test, predictions)
     mse = mean_squared_error(y_test, predictions)
     rmse = math.sqrt(mse)
     print("MAE: {:.4f}\tRMSE: {:.4f}".format(mae, rmse))
-
         
     capital = 0
     posicao = 0
@@ -131,5 +120,4 @@ def ensemble(base_path, ano_inicio = '1/3/2022', tipo = 'media'):
         
     return fechamentos, riqueza
 
-#ensemble('PETR3.SA', tipo = 'media')
-ensemble('PETR3.SA', tipo = 'media ponderada')
+stacking('PETR3.SA')
