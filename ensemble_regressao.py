@@ -23,7 +23,7 @@ def update(capital,posicao,precoHoje,decisao,ultimoDia):
             capital, posicao = venda(capital, posicao, precoHoje, posicao)
     return capital, posicao
 
-def ensemble(base_path, ano_inicio = '1/3/2022', tipo = 'media'):
+def ensembleR(base_path, ano_inicio = '1/3/2022', tipo = 'media'):
     base = pd.read_csv('./dados/{}-indicadores.csv'.format(base_path))
 
     # Remover linhas com valores NaN
@@ -131,5 +131,5 @@ def ensemble(base_path, ano_inicio = '1/3/2022', tipo = 'media'):
         
     return fechamentos, riqueza
 
-#ensemble('PETR3.SA', tipo = 'media')
-ensemble('PETR3.SA', tipo = 'media ponderada')
+#ensembleR('PETR3.SA', tipo = 'media')
+#ensembleR('PETR3.SA', tipo = 'media ponderada')

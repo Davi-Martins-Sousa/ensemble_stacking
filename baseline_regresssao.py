@@ -23,7 +23,7 @@ def update(capital,posicao,precoHoje,decisao,ultimoDia):
             capital, posicao = venda(capital, posicao, precoHoje, posicao)
     return capital, posicao
 
-def base(base_path, ano_inicio = '1/3/2022', tipo = 'media'):
+def baseR(base_path, ano_inicio = '1/3/2022', tipo = 'media'):
     base = pd.read_csv('./dados/{}.csv'.format(base_path))
 
     # Remover linhas com valores NaN
@@ -76,5 +76,3 @@ def base(base_path, ano_inicio = '1/3/2022', tipo = 'media'):
     print(f'Capital: {round(capital, 2)}\tAções em posse: {posicao}\tPreço: {round(preco, 2)}\tRiqueza: {round(riquezaAtual, 2)}')
         
     return fechamentos, riqueza
-
-base('teste')

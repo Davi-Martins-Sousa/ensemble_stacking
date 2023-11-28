@@ -23,7 +23,7 @@ def update(capital,posicao,precoHoje,decisao,ultimoDia):
             capital, posicao = venda(capital, posicao, precoHoje, posicao)
     return capital, posicao
 
-def stacking(base_path, ano_inicio = '1/3/2022'):
+def stackingR(base_path, ano_inicio = '1/3/2022'):
     base = pd.read_csv('./dados/{}-indicadores.csv'.format(base_path))
 
     # Remover linhas com valores NaN
@@ -120,4 +120,4 @@ def stacking(base_path, ano_inicio = '1/3/2022'):
         
     return fechamentos, riqueza
 
-stacking('PETR3.SA')
+stackingR('PETR3.SA')
