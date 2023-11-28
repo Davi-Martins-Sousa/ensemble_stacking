@@ -1,0 +1,37 @@
+baseline - classificação
+MAE: 0.3702     RMSE: 0.6085
+Capital: 296.68 Ações em posse: 0       Preço: 69.2     Riqueza: 296.68
+
+ensemble - votação - classificação
+Recall: 0.2529  Precisão: 0.3667        AUC: 0.4981
+Capital: 121.16 Ações em posse: 0       Preço: 69.2     Riqueza: 121.16
+
+ensemble - media - classificação
+Recall: 0.2529  Precisão: 0.3929        AUC: 0.5116
+Capital: 249.75 Ações em posse: 0       Preço: 69.2     Riqueza: 249.75
+
+ensemble - media ponderada - classificação
+Peso: [0.20177130831287268, 0.19361627499123113, 0.20940021045247278, 0.19992984917572781, 0.19528235706769553]
+Recall: 0.2414  Precisão: 0.3818        AUC: 0.5058
+Capital: 231.45 Ações em posse: 0       Preço: 69.2     Riqueza: 231.45
+
+baseline - regressão
+MAE: 3.6387     RMSE: 5.8898
+Capital: -363.54        Ações em posse: 0       Preço: 69.2     Riqueza: -363.54
+
+ensemble - media - regressão
+MAE: 2.6903     RMSE: 4.3248
+Capital: 44.25  Ações em posse: 0       Preço: 69.2     Riqueza: 44.25
+
+ensemble - media ponderada - regressão
+Peso: [0.013486920819997899, 0.10960616043790773, 0.01500091502625232, 0.8488110818039477, 0.013094921911894234]
+MAE: 2.5469     RMSE: 4.2720
+Capital: -309.99        Ações em posse: 0       Preço: 69.2     Riqueza: -309.99
+
+stacking - classificação
+Recall: 0.0805  Precisão: 0.3333        AUC: 0.4929
+Capital: 417.22 Ações em posse: 0       Preço: 69.2     Riqueza: 417.22
+
+stacking - regressão
+MAE: 29.7698    RMSE: 48.6421
+Capital: -597.5 Ações em posse: 0       Preço: 69.2     Riqueza: -597.5
